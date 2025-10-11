@@ -14,11 +14,14 @@
 // implementations manually. Venture further only if you're curious.
 
 trait Power<RHS = Self> {
-    fn power(&self, value: RHS) -> Self;
+    type Output;
+    fn power(&self, value: RHS) -> Self::Output;
 }
 
 impl Power<u16> for u32 {
-    fn power(&self, value: u16) -> Self {
+    type Output = u32;
+    fn power(&self, value: u16) -> Self::Output {
+        
         if value == 0 {
             1
         } else {
@@ -33,6 +36,7 @@ impl Power<u16> for u32 {
 }
 
 impl Power<u32> for u32 {
+    type Output = u32;
     fn power(&self, value: u32) -> Self {
         let mut res = 1;
 
@@ -44,6 +48,7 @@ impl Power<u32> for u32 {
 }
 
 impl Power<&u32> for u32 {
+    type Output = u32;
     fn power(&self, value: &u32) -> Self {
         let mut res = 1;
 
