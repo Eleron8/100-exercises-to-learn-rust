@@ -28,16 +28,11 @@ impl TicketNewError {
 fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
     match Ticket::new(title.clone(), description.clone(), status.clone()) {
         Ok(v) => v,
-        Err(err) => {
-            match err {
-                TicketNewError::TitleError { .. } => {
-                    let msg = err.get_err();
-                    panic!("{msg}")
-                },
-                TicketNewError::DescriptionError { .. } => {
-                    Ticket::new(title, "Description not provided".to_string(), status).unwrap()
-                }
-            }
+        Err(TicketNewError::TitleError { message }) => {
+           panic!("{message}")
+        },
+        Err(TicketNewError::DescriptionError { .. }) => {
+             Ticket::new(title, "Description not provided".to_string(), status).unwrap()
         }
     }
 }

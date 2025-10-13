@@ -2,7 +2,48 @@
 //   enforcing that the description is not empty and is not longer than 500 bytes.
 //   Implement the traits required to make the tests pass too.
 
+#[derive(Debug, PartialEq, Clone)]
 pub struct TicketDescription(String);
+
+// #[derive(Debug, thiserror::Error)]
+// #[error("{invalid_description} is not valid as description")]
+// pub struct ParseDescriptionError {
+//     invalid_description: String,
+// }
+
+#[derive(Debug, thiserror::Error)]
+pub enum DescriptionError {
+    #[error("The description cannot be empty")]
+    DescriptionEmpty,
+    #[error("The description cannot be longer than 500 bytes")]
+    DescriptionTooLong
+}
+
+
+
+impl TryFrom<&str> for TicketDescription {
+    type Error = DescriptionError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        
+        let length = value.len();
+        if length == 0 {
+            Err(DescriptionError::DescriptionEmpty)
+        } else if length > 500 {
+            Err(DescriptionError::DescriptionTooLong)
+        } else {
+            Ok(TicketDescription(value.to_string()))
+        }
+    }
+}
+
+impl TryFrom<String> for TicketDescription {
+    type Error = DescriptionError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        value.as_str().try_into()
+    }
+}
 
 #[cfg(test)]
 mod tests {
