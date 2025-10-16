@@ -16,7 +16,7 @@ impl Index<&TicketId> for TicketStore {
     type Output = Ticket;
 
     fn index(&self, index: &TicketId) -> &Self::Output {
-        &self.tickets[index.0 as usize]
+        &self[*index]
     }
 }
 
@@ -24,7 +24,7 @@ impl Index<TicketId> for TicketStore {
     type Output = Ticket;
 
     fn index(&self, index: TicketId) -> &Self::Output {
-        &self.tickets[index.0 as usize]
+        self.tickets.iter().find(|&t| t.id == index).unwrap()
     }
 }
 
