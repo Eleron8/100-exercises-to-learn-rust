@@ -10,7 +10,7 @@ pub async fn echoes(first: TcpListener, second: TcpListener) -> Result<(), anyho
             if let Ok(result) = socket1 {
                 let (mut socket, _) = result;
                 let (mut reader, mut writer) = socket.split();
-                tokio::io::copy(&mut reader, &mut writer).await?;
+                let _ = tokio::io::copy(&mut reader, &mut writer).await;
             }
         });
 
@@ -18,7 +18,7 @@ pub async fn echoes(first: TcpListener, second: TcpListener) -> Result<(), anyho
             if let Ok(result) = socket2 {
                 let (mut socket, _) = result;
                 let (mut reader, mut writer) = socket.split();
-                let _ = tokio::io::copy(&mut reader, &mut writer).await?;
+                let _ = tokio::io::copy(&mut reader, &mut writer).await;
             }
         });
     }
