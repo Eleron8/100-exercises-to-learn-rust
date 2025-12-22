@@ -2,17 +2,27 @@
 //  When running the tests, you should observe that it hangs, due to a
 //  deadlock between the caller and the server.
 //  Use `spawn_blocking` inside `echo` to resolve the issue.
-use std::io::{Read, Write};
+use std::{io::{Read, Write}};
+
 use tokio::net::TcpListener;
 
 pub async fn echo(listener: TcpListener) -> Result<(), anyhow::Error> {
     loop {
         let (socket, _) = listener.accept().await?;
         let mut socket = socket.into_std()?;
-        socket.set_nonblocking(false)?;
-        let mut buffer = Vec::new();
-        socket.read_to_end(&mut buffer)?;
-        socket.write_all(&buffer)?;
+        // socket.set_nonblocking(false)?;
+        // let mut buffer = Vec::new();
+        // socket.read_to_end(&mut buffer)?;
+        // let mut shared_buffer = Arc::new(buffer);
+        // let mut read_buffer = Arc::clone(&mut shared_buffer);
+        tokio::task::spawn_blocking(move || -> Result<(), anyhow::Error> {
+            socket.set_nonblocking(false)?;
+            let mut buffer = Vec::new();
+            socket.read_to_end(&mut buffer)?;
+            socket.write_all(&buffer)?;
+            Ok(())
+        });
+        
     }
 }
 
